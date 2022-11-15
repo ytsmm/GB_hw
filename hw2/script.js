@@ -108,5 +108,5 @@ const products = new productsList();
 products.getProducts();
 products.render();
 
-new Cart();
+const cart = new Cart();
    
