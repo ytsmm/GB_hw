@@ -9,6 +9,10 @@ header {
     justify-content: space-between;
 }
 
+button {
+    cursor: pointer;
+}
+
 .btn-cart {
     border: none;
     background: #6883bc;
@@ -43,17 +47,42 @@ header {
 .product-item {
     background-color: rgb(248, 243, 243);
     padding: 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     font-size: 24px;
-}
-
-.product-item img {
-    width: 50%;
-    object-fit: contain;
 }
 
 .product-item h3 {
     font-size: 32px;
+}
+
+.cart-block {
+    width: 200px;
+    border: 1px solid rgb(208, 208, 208);
+    padding: 20px;
+    position: absolute;
+    right: 1%;
+    top: 10%;
+    font-size: 14px;
+    box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.hidden {
+    display: none;
+}
+
+.add-btn, .remove-btn{
+    background: #6883bc;
+    border: none;
+    color: #ffff;
+    text-align: center;
+    border-radius: 10%;
+}
+
+.add-btn{
+    margin-right: 5px;
 }

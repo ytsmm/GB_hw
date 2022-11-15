@@ -1,73 +1,112 @@
-class GoodsItem {
-    constructor(title, price, image) {
-        this.title = title;
-        this.price = price;
-        this.image = image;
-    }
+const API = "https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses";
 
+class productsItem {
+    constructor(product_name, price) {
+        this.product_name = product_name;
+        this.price = price;
+    } 
     render() {
-        return `<div class="product-item"><div class="item-info"><h3>${this.title}</h3><p>${this.price}</p><button class="buy-btn">Купить</button></div><img src="${this.image}"></div>`
-        // return `<div class="goods-item"><h3>${this.title}</h3><p>${this.price}</p></div>`;
+        return `<div class="product-item"><h3>${this.product_name}</h3><p>${this.price}</p><button class="buy-btn">Купить</button></div>`
     }
 }
 
-class GoodsList {
-    constructor() {
-        this.goods = [];
+class productsList {
+    constructor(container = '.products') {
+        this.container = container;
+        this.products = [];
+        this.getProducts()
+            .then(data => {
+                this.products = data;
+                this.render()
+            });
     }
-    fetchGoods() {
-        this.goods = [
-            { title: "Blazer", price: 5000, image: "https://imgcdn.befree.ru/rest/V1/images/1024/product/images/2111035600/2111035600_50_1.webp" },
-            { title: "Trousers", price: 3000, image: "https://ae04.alicdn.com/kf/S360ee83ddf14470bbf92a8995bfeb4e9g.jpg" },
-            { title: "Hoodie", price: 2500, image: "https://shop-cdn1.vigbo.tech/shops/114929/products/20763072/images/2-f4ba2c5247aa1e6e0cfde51b3022c842.jpg" },
-        ];
+    getProducts() {
+        return fetch(`${API}/catalogData.json`)
+            .then(result => result.json())
+            .catch(error => {
+                console.log(error);
+            });
     }
     render() {
         let listHtml = '';
-        this.goods.forEach(good => {
-            const goodItem = new GoodsItem(good.title, good.price, good.image);
-            listHtml += goodItem.render();
+        this.products.forEach(product => {
+            const productItem = new productsItem(product.product_name, product.price);
+            listHtml += productItem.render();
         });
         document.querySelector('.products').innerHTML = listHtml;
-    }
-    totalSum() {
-        let sum = 0;
-        this.goods.forEach(good => {
-            sum += good.price;
-        })
-        console.log(sum);
     }
 }
 
 class Cart {
-    constructor() {
-
+    constructor(container = '.cart-block') {
+        this.container = container;
+        this.products = [];
+        this.clickCart();
+        this.showProducts()
+            .then(data => {
+                this.products = data.contents;
+                this.render()
+            });
     }
-    addItem() {
-
-    }
-    removeItem() {
-
+    showProducts() {
+        return fetch(`${API}/getBasket.json`)
+            .then(result => result.json())
+            .catch(error => {
+                console.log(error);
+            });
     }
     render() {
-
+        let listHtml = '';
+        this.products.forEach(product => {
+            const cartItem = new CartItem(product.product_name, product.price, product.quantity);
+            listHtml += cartItem.render();
+        });
+        document.querySelector('.cart-block').insertAdjacentHTML('beforeend', listHtml);
     }
-
-    findSum() {
-
+    totalSum() {
+        let sum = 0;
+        for (let product in this.products) {
+            sum += product.price;
+        }
+        console.log(`Общая сумма корзины: ${sum}`);
+    }
+    clickCart() {
+        document.querySelector('.btn-cart').addEventListener('click', () => {
+            document.querySelector('.cart-block').classList.toggle('hidden');
+        });
     }
 }
 
 class CartItem {
-    constructor() {
-
+    constructor(product_name, price, quantity) {
+        this.product_name = product_name;
+        this.price = price;
+        this.quantity = quantity;
+        this.addItem();
+        this.removeItem();
     }
     render() {
-        
+        return `<div class="cart-item"><div><h4>${this.product_name}</h4><p>${this.price}</p><p>${this.quantity}</p></div><div class="cart-item-btns"><button class="add-btn">+</button><button class="remove-btn">-</button></div></div><hr>`
     }
+    addItem() {
+        document.querySelectorAll('.add-btn')
+            .forEach(btn => btn.addEventListener('click', () => {
+                this.quantity += 1;
+                console.log(this.product_name, this.quantity);
+            }));       
+    };
+    removeItem() {
+        document.querySelectorAll('.remove-btn')
+            .forEach(btn => btn.addEventListener('click', () => {
+                this.quantity += 1;
+                console.log(this.product_name, this.quantity);
+            }));       
+    };
 }
 
-const list = new GoodsList();
-list.fetchGoods();
-list.render();
-list.totalSum();
+const products = new productsList();
+products.getProducts();
+products.render();
+
+new Cart();
+   
